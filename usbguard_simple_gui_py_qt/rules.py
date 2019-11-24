@@ -16,3 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with "USBGuard Simple GUI Py/Qt".  If not, see
 # <https://www.gnu.org/licenses/>.
+
+from enum import Enum, unique
+
+
+@unique
+class DeviceAttributeName(Enum):
+    ID = 'id'
+    HASH = 'hash'
+    PARENT_HASH = 'parent-hash'
+    NAME = 'name'
+    SERIAL = 'serial'
+    VIA_PORT = 'via-port'
+    WITH_INTERFACE = 'with-interface'
+    WITH_CONNECT_TYPE = 'with-connect-type'
