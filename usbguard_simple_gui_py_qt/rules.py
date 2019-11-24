@@ -57,6 +57,20 @@ class DeviceAttribute(Generic[DeviceAttributeValueType]):
     operator: Optional[DeviceAttributeOperator]
     values: List[DeviceAttributeValueType]
 
+    @property
+    def human_repr(self) -> str:
+        if len(self.values) == 1 and self.operator is None:
+            right_value = self._value_human_repr(self.values[0])
+        else:
+            right_value = '%s{ %s }' % (
+                self.operator.value if self.operator else '',
+                ' '.join(map(self._value_human_repr, self.values)))
+        return f'{self.name.value}: {right_value}'
+
+    @staticmethod
+    def _value_human_repr(value) -> str:
+        return f'"{value}"' if isinstance(value, str) else str(value)
+
 
 @dataclass
 class DeviceId:
