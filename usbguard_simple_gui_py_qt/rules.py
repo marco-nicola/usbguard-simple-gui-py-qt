@@ -39,3 +39,10 @@ class DeviceAttributeOperator(Enum):
     NONE_OF = 'none-of'
     EQUALS = 'equals'
     EQUALS_ORDERED = 'equals-ordered'
+
+
+@unique
+class RuleTarget(Enum):
+    ALLOW = 'allow'
+    BLOCK = 'block'
+    REJECT = 'reject'
