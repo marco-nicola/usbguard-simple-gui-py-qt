@@ -17,9 +17,9 @@
 # along with "USBGuard Simple GUI Py/Qt".  If not, see
 # <https://www.gnu.org/licenses/>.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, unique
-from typing import Generic, List, Optional, TypeVar
+from typing import Dict, Generic, List, Optional, TypeVar
 
 
 @unique
@@ -103,3 +103,10 @@ class DeviceInterfaceType:
     @staticmethod
     def _hex_repr(value: Optional[int]) -> str:
         return '*' if value is None else '%02x' % value
+
+
+@dataclass
+class Rule:
+    target: RuleTarget
+    attributes: Dict[DeviceAttributeName, DeviceAttribute] = \
+        field(default_factory=dict)
