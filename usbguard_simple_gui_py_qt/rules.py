@@ -133,3 +133,16 @@ class Rule:
             raise AttributeError(
                 f"'{type(self).__name__}' object has no attribute '{name}'")
         return self.attributes.get(attribute)
+
+    @property
+    def human_repr(self) -> str:
+        return '\n'.join([
+            f'target: {self.target.value}',
+            *[
+                # Iterating on the enum, and not on the attributes directly,
+                # to ensure that the same order is always respected
+                self.attributes[key].human_repr
+                for key in DeviceAttributeName
+                if key in self.attributes
+            ]
+        ])
