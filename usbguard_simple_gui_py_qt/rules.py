@@ -110,3 +110,12 @@ class Rule:
     target: RuleTarget
     attributes: Dict[DeviceAttributeName, DeviceAttribute] = \
         field(default_factory=dict)
+
+    def __getattr__(self, name: str) -> Optional[DeviceAttribute]:
+        enum_name = name.replace('_', '-')
+        try:
+            attribute = DeviceAttributeName(enum_name)
+        except ValueError:
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '{name}'")
+        return self.attributes.get(attribute)
