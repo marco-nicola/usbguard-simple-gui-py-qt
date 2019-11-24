@@ -56,3 +56,24 @@ class DeviceAttribute(Generic[DeviceAttributeValueType]):
     name: DeviceAttributeName
     operator: Optional[DeviceAttributeOperator]
     values: List[DeviceAttributeValueType]
+
+
+@dataclass
+class DeviceId:
+    vendor_id: Optional[int]
+    product_id: Optional[int]
+
+    def __repr__(self) -> str:
+        return f'{self.vendor_repr}:{self.product_repr}'
+
+    @property
+    def vendor_repr(self) -> str:
+        return self._hex_repr(self.vendor_id)
+
+    @property
+    def product_repr(self) -> str:
+        return self._hex_repr(self.product_id)
+
+    @staticmethod
+    def _hex_repr(value: Optional[int]) -> str:
+        return '*' if value is None else '%04x' % value
