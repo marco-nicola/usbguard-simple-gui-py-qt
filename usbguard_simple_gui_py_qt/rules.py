@@ -30,3 +30,12 @@ class DeviceAttributeName(Enum):
     VIA_PORT = 'via-port'
     WITH_INTERFACE = 'with-interface'
     WITH_CONNECT_TYPE = 'with-connect-type'
+
+
+@unique
+class DeviceAttributeOperator(Enum):
+    ALL_OF = 'all-of'
+    ONE_OF = 'one-of'
+    NONE_OF = 'none-of'
+    EQUALS = 'equals'
+    EQUALS_ORDERED = 'equals-ordered'
