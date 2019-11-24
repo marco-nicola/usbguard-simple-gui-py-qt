@@ -25,3 +25,10 @@ from .rules import Rule
 class Device:
     device_id: int
     rule: Rule
+
+    @property
+    def human_readable_name(self) -> str:
+        name = self.rule.name
+        if name and len(name.values) == 1:
+            return name.values[0]
+        return f'#{self.device_id}'
