@@ -17,7 +17,9 @@
 # along with "USBGuard Simple GUI Py/Qt".  If not, see
 # <https://www.gnu.org/licenses/>.
 
+from dataclasses import dataclass
 from enum import Enum, unique
+from typing import Optional, TypeVar, Generic, List
 
 
 @unique
@@ -46,3 +48,11 @@ class RuleTarget(Enum):
     ALLOW = 'allow'
     BLOCK = 'block'
     REJECT = 'reject'
+
+
+DeviceAttributeValueType = TypeVar('DeviceAttributeValueType')
+@dataclass
+class DeviceAttribute(Generic[DeviceAttributeValueType]):
+    name: DeviceAttributeName
+    operator: Optional[DeviceAttributeOperator]
+    values: List[DeviceAttributeValueType]
