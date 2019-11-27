@@ -18,7 +18,7 @@
 # <https://www.gnu.org/licenses/>.
 
 from enum import auto, Enum, IntEnum, unique
-from typing import Callable, Dict, List, Set
+from typing import Callable, Dict, List, Set, Optional
 from dbus import (Array,
                   Dictionary,
                   Interface,
@@ -54,6 +54,12 @@ class EventPresenceChangeType(IntEnum):
 
 
 class UsbguardDbusInterface:
+    _TARGET_TO_INT = {
+        RuleTarget.ALLOW: 0,
+        RuleTarget.BLOCK: 1,
+        RuleTarget.REJECT: 2,
+    }
+
     def __init__(self) -> None:
         DBusGMainLoop(set_as_default=True)
 
@@ -97,6 +103,18 @@ class UsbguardDbusInterface:
                 rule=RuleParser.parse(str(device_struct[1])))
             for device_struct in response
         ]
+
+    def apply_device_policy(
+        self,
+        device_id: int,
+        target: RuleTarget,
+        permanent: bool
+    ) -> Optional[int]:
+        response: UInt32 = self._devices.applyDevicePolicy(
+            device_id,
+            self._TARGET_TO_INT[target],
+            permanent)
+        return int(response) if permanent else None
 
     def _on_device_presence_changed(
         self,
