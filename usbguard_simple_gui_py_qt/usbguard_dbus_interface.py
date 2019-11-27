@@ -18,9 +18,17 @@
 # <https://www.gnu.org/licenses/>.
 
 from enum import auto, Enum, IntEnum, unique
-from typing import Callable, Dict, Set
-from dbus import Dictionary, Interface, String, SystemBus, UInt32
+from typing import Callable, Dict, List, Set
+from dbus import (Array,
+                  Dictionary,
+                  Interface,
+                  String,
+                  Struct,
+                  SystemBus,
+                  UInt32)
 from dbus.mainloop.glib import DBusGMainLoop
+
+from usbguard_simple_gui_py_qt.rules import RuleTarget
 from .device import Device
 from .rule_parsing import RuleParser
 
@@ -79,6 +87,16 @@ class UsbguardDbusInterface:
         callback: Callable
     ) -> None:
         self._callbacks[event_type].remove(callback)
+
+    def list_devices(self, query: str = 'match') -> List[Device]:
+        response: Array[Struct[UInt32, String]] = \
+            self._devices.listDevices(query)
+        return [
+            Device(
+                device_id=int(device_struct[0]),
+                rule=RuleParser.parse(str(device_struct[1])))
+            for device_struct in response
+        ]
 
     def _on_device_presence_changed(
         self,
