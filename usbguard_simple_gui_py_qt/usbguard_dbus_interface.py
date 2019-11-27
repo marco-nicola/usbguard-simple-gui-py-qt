@@ -55,12 +55,16 @@ class EventPresenceChangeType(IntEnum):
     REMOVE = 3
 
 
+_TARGET_TO_INT = {
+    RuleTarget.ALLOW: 0,
+    RuleTarget.BLOCK: 1,
+    RuleTarget.REJECT: 2,
+}
+
+_INT_TO_TARGET = {_TARGET_TO_INT[t]: t for t in _TARGET_TO_INT}
+
+
 class UsbguardDbusInterface:
-    _TARGET_TO_INT = {
-        RuleTarget.ALLOW: 0,
-        RuleTarget.BLOCK: 1,
-        RuleTarget.REJECT: 2,
-    }
 
     def __init__(self) -> None:
         DBusGMainLoop(set_as_default=True)
@@ -117,7 +121,7 @@ class UsbguardDbusInterface:
     ) -> Optional[int]:
         response: UInt32 = self._devices.applyDevicePolicy(
             device_id,
-            self._TARGET_TO_INT[target],
+            _TARGET_TO_INT[target],
             permanent)
         return int(response) if permanent else None
 
@@ -173,8 +177,8 @@ class UsbguardDbusInterface:
         :param _attributes: A dictionary of device attributes and their values.
         """
         try:
-            resolved_target_old = int(target_old)
-            resolved_target_new = int(target_new)
+            resolved_target_old = _INT_TO_TARGET[int(target_old)]
+            resolved_target_new = _INT_TO_TARGET[int(target_new)]
             resolved_rule_id = int(rule_id)
             device = Device(
                 device_id=int(device_id),

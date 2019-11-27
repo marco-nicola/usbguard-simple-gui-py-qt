@@ -139,9 +139,9 @@ class MainWindow(QDialog):
     def _on_device_policy_changed(
         self,
         device: Device,
-        _resolved_target_old: int,
-        _resolved_target_new: int,
-        _resolved_rule_id: int
+        _target_old: RuleTarget,
+        _target_new: RuleTarget,
+        _rule_id: int
     ) -> None:
         self._device_model.update_or_add_device(device)
 
