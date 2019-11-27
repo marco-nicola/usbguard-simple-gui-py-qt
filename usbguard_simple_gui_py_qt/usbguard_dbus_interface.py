@@ -75,7 +75,7 @@ class UsbguardDbusInterface:
             'DevicePresenceChanged', self._on_device_presence_changed)
 
         self._callbacks: Dict[CallbackEventType, Set[Callable]] = \
-            { e: set() for e in CallbackEventType }
+            {e: set() for e in CallbackEventType}
 
     def register_callback(
         self,
