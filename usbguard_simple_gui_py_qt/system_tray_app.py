@@ -44,7 +44,7 @@ class SystemTrayApp:
         usbguard_dbus: UsbguardDbusInterface
     ) -> None:
         self._app = app
-        self._main_window = MainWindow(usbguard_dbus)
+        self._main_window = MainWindow(app, usbguard_dbus)
         self._open_action = self._create_open_action()
         self._quit_action = self._create_quit_action()
         self._menu = self._create_menu()
