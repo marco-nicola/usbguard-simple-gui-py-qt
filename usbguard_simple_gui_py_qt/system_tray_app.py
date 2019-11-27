@@ -118,8 +118,16 @@ class SystemTrayApp:
             self._on_device_presence_changed)
 
         self._usbguard_dbus.register_callback(
+            CallbackEventType.DEVICE_POLICY_CHANGED,
+            self._on_device_policy_changed)
+
+        self._usbguard_dbus.register_callback(
             CallbackEventType.DEVICE_PRESENCE_CHANGED_ERROR,
             self._on_device_presence_changed_error)
+
+        self._usbguard_dbus.register_callback(
+            CallbackEventType.DEVICE_POLICY_CHANGED_ERROR,
+            self._on_device_policy_changed_error)
 
     def _on_device_presence_changed(
         self,
@@ -133,6 +141,19 @@ class SystemTrayApp:
             self._show_allowed_device_message(device)
         else:
             self._show_device_to_be_managed_message(device)
+
+    def _on_device_policy_changed(
+        self,
+        device: Device,
+        target_old: RuleTarget,
+        target_new: RuleTarget,
+        rule_id: int,
+    ) -> None:
+        self._tray_icon.showMessage(
+            f'USB device policy changed for "{device.human_readable_name}"',
+            f'Rule #{rule_id}: {target_old.value} →  {target_new.value}\n\n'
+            f'{device.rule.human_repr}',
+            QSystemTrayIcon.Information)
 
     def _show_removed_device_message(self, device: Device):
         self._tray_icon.showMessage(
@@ -155,10 +176,21 @@ class SystemTrayApp:
             100_000_000)
 
     def _on_device_presence_changed_error(self, error: Exception) -> None:
+        self._show_error_message(
+            'Error while processing a '
+            'device presence change event.',
+            error)
+
+    def _on_device_policy_changed_error(self, error: Exception) -> None:
+        self._show_error_message(
+            'An error occurred while processing a '
+            'device policy change event.',
+            error)
+
+    def _show_error_message(self, description: str, error: Exception) -> None:
         self._tray_icon.showMessage(
             f'{APP_NAME} - Application Error',
-            f'An error occurred while processing a device presence change '
-            f'event.\n\nDetails:\n{error.__class__.__name__} - {str(error)}',
+            f'{description}\n\nDetails:\n{type(error).__name__} - {error}',
             QSystemTrayIcon.Critical,
             100_000_000)
 
