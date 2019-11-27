@@ -43,6 +43,8 @@ _DEVICES_IFACE_NAME = 'org.usbguard.Devices1'
 class CallbackEventType(Enum):
     DEVICE_PRESENCE_CHANGED = auto()
     DEVICE_PRESENCE_CHANGED_ERROR = auto()
+    DEVICE_POLICY_CHANGED = auto()
+    DEVICE_POLICY_CHANGED_ERROR = auto()
 
 
 @unique
@@ -73,6 +75,9 @@ class UsbguardDbusInterface:
 
         self._devices.connect_to_signal(
             'DevicePresenceChanged', self._on_device_presence_changed)
+
+        self._devices.connect_to_signal(
+            'DevicePolicyChanged', self._on_device_policy_changed)
 
         self._callbacks: Dict[CallbackEventType, Set[Callable]] = \
             {e: set() for e in CallbackEventType}
@@ -148,3 +153,42 @@ class UsbguardDbusInterface:
         event_type = CallbackEventType.DEVICE_PRESENCE_CHANGED
         for callback in self._callbacks[event_type]:
             callback(device, resolved_event, resolved_target)
+
+    def _on_device_policy_changed(
+        self,
+        device_id: UInt32,
+        target_old: UInt32,
+        target_new: UInt32,
+        device_rule: String,
+        rule_id: UInt32,
+        _attributes: Dictionary
+    ) -> None:
+        """
+        :param device_id: Device id of the device.
+        :param target_old: Previous authorization target in numerical form.
+        :param target_new: Current authorization target in numerical form.
+        :param device_rule: Device specific rule.
+        :param rule_id: A rule id of the matched rule. Otherwise a reserved
+            rule id value is used.
+        :param _attributes: A dictionary of device attributes and their values.
+        """
+        try:
+            resolved_target_old = int(target_old)
+            resolved_target_new = int(target_new)
+            resolved_rule_id = int(rule_id)
+            device = Device(
+                device_id=int(device_id),
+                rule=RuleParser.parse(device_rule))
+        except Exception as error:
+            event_type = CallbackEventType.DEVICE_POLICY_CHANGED_ERROR
+            for callback in self._callbacks[event_type]:
+                callback(error)
+            return
+
+        event_type = CallbackEventType.DEVICE_POLICY_CHANGED
+        for callback in self._callbacks[event_type]:
+            callback(
+                device,
+                resolved_target_old,
+                resolved_target_new,
+                resolved_rule_id)
