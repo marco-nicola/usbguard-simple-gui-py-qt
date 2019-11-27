@@ -132,7 +132,7 @@ class SystemTrayApp:
         elif device.rule.target is RuleTarget.ALLOW:
             self._show_allowed_device_message(device)
         else:
-            self._show_not_allowed_device_message(device)
+            self._show_device_to_be_managed_message(device)
 
     def _show_removed_device_message(self, device: Device):
         self._tray_icon.showMessage(
@@ -146,9 +146,9 @@ class SystemTrayApp:
             device.rule.human_repr,
             QSystemTrayIcon.Information)
 
-    def _show_not_allowed_device_message(self, device: Device):
+    def _show_device_to_be_managed_message(self, device: Device):
         self._tray_icon.showMessage(
-            f'USB device "{device.human_readable_name}" is not allowed!',
+            f'USB device "{device.human_readable_name}" inserted',
             f'Click here to open {APP_NAME} and take action.\n\n'
             f'{device.rule.human_repr}',
             QSystemTrayIcon.Warning,
