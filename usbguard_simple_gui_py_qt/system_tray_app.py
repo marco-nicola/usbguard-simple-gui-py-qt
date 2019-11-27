@@ -115,12 +115,11 @@ class SystemTrayApp:
 
         self._usbguard_dbus.register_callback(
             CallbackEventType.DEVICE_PRESENCE_CHANGED,
-            self._on_device_presence_changed
-        )
+            self._on_device_presence_changed)
+
         self._usbguard_dbus.register_callback(
             CallbackEventType.DEVICE_PRESENCE_CHANGED_ERROR,
-            self._on_device_presence_changed_error
-        )
+            self._on_device_presence_changed_error)
 
     def _on_device_presence_changed(
         self,
